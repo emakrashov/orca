@@ -4,9 +4,9 @@ import (
 	"bufio"
 	"fmt"
 	"net"
-	"storage/storage"
 	"strings"
 
+	"github.com/emakrashov/orca/storage"
 	"rsc.io/quote"
 )
 
@@ -18,10 +18,10 @@ func handleConn(conn net.Conn, storage storage.Storage) {
 		if len(line) >= 2 {
 			command, arg := line[0], line[1]
 			if (command == "add") && (line[2] != "") {
-				storage.AddValue(arg, []byte(line[2]))
+				storage.SetValue(arg, []byte(line[2]))
 			}
 			if command == "get" {
-				res := storage.ReadValue(strings.TrimSpace(arg))
+				res := storage.GetValue(strings.TrimSpace(arg))
 				conn.Write([]byte("" + string(res) + "\n"))
 			}
 		}
@@ -34,7 +34,7 @@ func handleConn(conn net.Conn, storage storage.Storage) {
 }
 
 func launch() {
-	storage := CreateStorage("/tmp/dat2")
+	storage := storage.CreateStorage("/tmp/dat2")
 	defer storage.CloseStorage()
 
 	fmt.Println("Launching server...")

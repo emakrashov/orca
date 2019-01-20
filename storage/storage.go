@@ -1,6 +1,8 @@
 package storage
 
-import "os"
+import (
+	"os"
+)
 
 // Coords is offset and length of the value in the database file
 type Coords struct {
@@ -29,7 +31,9 @@ func CreateStorage(filename string) Storage {
 	return Storage{file: f, cacheIndex: cacheIndex}
 }
 
-func (storage Storage) CloseStorage() {
+// CloseStorage closes the corresponding file
+func (storage *Storage) CloseStorage() {
+	println("Close file")
 	storage.file.Close()
 }
 
@@ -39,16 +43,18 @@ func addBlock(file *os.File, data []byte) int {
 	return bytesWritten
 }
 
-func (storage Storage) AddValue(key string, value []byte) {
+// SetValue sets the key with the given value in the store
+func (storage *Storage) SetValue(key string, value []byte) {
 	cache := storage.cacheIndex.store
-	offset := storage.cacheIndex.size
+	size := storage.cacheIndex.size
 	bytesWritten := addBlock(storage.file, value)
-	cache[key] = Coords{offset: offset, len: bytesWritten}
-	offset = offset + int64(bytesWritten)
-	storage.cacheIndex.size = offset
+	cache[key] = Coords{offset: size, len: bytesWritten}
+	size = int64(size + int64(bytesWritten))
+	storage.cacheIndex = CacheIndex{size: size, store: cache}
 }
 
-func (storage Storage) ReadValue(key string) []byte {
+// GetValue gets value from the store
+func (storage *Storage) GetValue(key string) []byte {
 	file := storage.file
 	cache := storage.cacheIndex.store
 	coord := cache[key]

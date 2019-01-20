@@ -43,14 +43,12 @@ func TestConcurrentStorage(t *testing.T) {
 	for w := 1; w <= 1000; w++ {
 		x := w
 		go func() {
-			println("w ", x)
 			key := fmt.Sprintf("k%d", x)
 			value := []byte(fmt.Sprintf("[value%d]", x))
 			storage.SetValue(key, value)
 		}()
 	}
 
-	// storage.CloseStorage()
 	fmt.Scanln()
 	time.Sleep(500000000)
 	printFileContent("/tmp/dat4")

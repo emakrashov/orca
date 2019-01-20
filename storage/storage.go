@@ -11,26 +11,18 @@ type Coords struct {
 	len    int
 }
 
-// CacheIndex stores in-memory map of keys to offset and length
-type CacheIndex struct {
-	size  int64
-	store sync.Map
-	// store map[string]Coords
-}
-
 // Storage is main data structure
 type Storage struct {
-	file       *os.File
-	cacheIndex CacheIndex
+	file  *os.File
+	size  int64
+	store sync.Map
 }
 
 // CreateStorage creates an empty storage.
 func CreateStorage(filename string) Storage {
 	f, err := os.Create(filename)
 	check(err)
-	store := sync.Map{}
-	cacheIndex := CacheIndex{size: 0, store: store}
-	return Storage{file: f, cacheIndex: cacheIndex}
+	return Storage{file: f, size: 0, store: sync.Map{}}
 }
 
 // CloseStorage closes the corresponding file
@@ -47,20 +39,16 @@ func addBlock(file *os.File, data []byte) int {
 
 // SetValue sets the key with the given value in the store
 func (storage *Storage) SetValue(key string, value []byte) {
-	cache := &storage.cacheIndex.store
-	size := storage.cacheIndex.size
 	bytesWritten := addBlock(storage.file, value)
-	cache.Store(key, Coords{offset: size, len: bytesWritten})
-	size = int64(size + int64(bytesWritten))
-	storage.cacheIndex.size = size
+	storage.store.Store(key, Coords{offset: storage.size, len: bytesWritten})
+	storage.size = int64(storage.size + int64(bytesWritten))
 }
 
 // GetValue gets value from the store
 func (storage *Storage) GetValue(key string) []byte {
 	file := storage.file
-	cache := &storage.cacheIndex.store
-	coordz, _ := cache.Load(key)
-	coord := coordz.(*Coords)
+	coordz, _ := storage.store.Load(key)
+	coord := coordz.(Coords)
 	file.Seek(coord.offset, 0)
 	buffer := make([]byte, coord.len)
 	_, err := file.Read(buffer)

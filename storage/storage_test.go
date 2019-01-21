@@ -22,7 +22,7 @@ func TestStorage(t *testing.T) {
 
 	a = storage.GetValue("b")
 	if string(a) != "abracadabra" {
-		t.Fatal("Incorrect value fetched", string(a), storage)
+		t.Fatal("Incorrect value fetched", string(a))
 	}
 
 	a = storage.GetValue("c")

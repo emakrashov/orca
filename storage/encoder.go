@@ -5,28 +5,33 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
-	"log"
 )
 
-func decodeEntity(reader *bytes.Reader) string {
+func decodeEntity(reader io.Reader) (string, error) {
 	// Read first 4 byte containing length of the entity
 	buf := make([]byte, 4)
 	if _, err := io.ReadFull(reader, buf); err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 	entitySize := binary.LittleEndian.Uint32(buf)
 	entityBuf := make([]byte, entitySize)
 	if _, err := io.ReadFull(reader, entityBuf); err != nil {
-		log.Fatal(err)
+		return "", err
 	}
-	return string(entityBuf)
+	return string(entityBuf), nil
 }
 
-func decodeBlock(block []byte) (string, string) {
-	reader := bytes.NewReader(block)
-	key := decodeEntity(reader)
-	value := decodeEntity(reader)
-	return key, value
+func decodeBlock(reader io.Reader) (string, string, error) {
+	key, err := decodeEntity(reader)
+	if err != nil {
+		return "", "", err
+	}
+	value, err := decodeEntity(reader)
+	if err != nil {
+		return "", "", err
+	}
+
+	return key, value, nil
 }
 
 func encodeBlock(key string, value string) []byte {

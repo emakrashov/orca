@@ -39,8 +39,11 @@ func addBlock(file *os.File, data []byte) int {
 
 // SetValue sets the key with the given value in the store
 func (storage *Storage) SetValue(key string, value []byte) {
-	bytesWritten := addBlock(storage.file, value)
-	storage.store.Store(key, Coords{offset: storage.size, len: bytesWritten})
+	// string() ?
+	fullEntity := encodeBlock(key, string(value))
+	bytesWritten := addBlock(storage.file, fullEntity)
+	offset := int64(storage.size) + int64(len(key)) + 8
+	storage.store.Store(key, Coords{offset: offset, len: len(value)})
 	storage.size = int64(storage.size + int64(bytesWritten))
 }
 

@@ -15,18 +15,18 @@ func TestRecovery(t *testing.T) {
 
 	s := Recover("/tmp/dat4")
 
-	value := string(s.GetValue("a"))
-	if value != "abracadabra" {
+	value, _ := s.GetValue("a")
+	if string(value) != "abracadabra" {
 		t.Fatal("Incorrect value fetched", value)
 	}
 
-	value = string(s.GetValue("bfs"))
-	if value != "breadth-first search" {
+	value, _ = s.GetValue("bfs")
+	if string(value) != "breadth-first search" {
 		t.Fatal("Incorrect value fetched", value)
 	}
 
-	value = string(s.GetValue("co"))
-	if value != "coca-cola" {
+	value, _ = s.GetValue("co")
+	if string(value) != "coca-cola" {
 		t.Fatal("Incorrect value fetched", value)
 	}
 }

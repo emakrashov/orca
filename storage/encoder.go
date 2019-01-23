@@ -34,7 +34,7 @@ func decodeBlock(reader io.Reader) (string, string, error) {
 	return key, value, nil
 }
 
-func encodeBlock(key string, value string) []byte {
+func encodeRecord(key string, value string) []byte {
 	buf := new(bytes.Buffer)
 	encodeEntity(buf, key)
 	encodeEntity(buf, value)

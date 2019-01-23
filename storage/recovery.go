@@ -12,7 +12,7 @@ import (
 func Recover(filename string) *Storage {
 	file, err := os.Open(filename)
 	check(err)
-	storage := Storage{file: file, size: 0, store: sync.Map{}}
+	storage := Storage{file: file, size: 0, store: sync.Map{}, mutex: &sync.Mutex{}}
 
 	for {
 		k, v, err := decodeBlock(file)

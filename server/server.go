@@ -9,6 +9,39 @@ import (
 	"github.com/emakrashov/orca/storage"
 )
 
+// either "ok sth" or "error sth"
+func parseCommand(storage *storage.Storage, line string) (string, bool) {
+	terms := strings.Split(line, " ")
+	if len(terms) == 0 {
+		return "", true
+	}
+	switch terms[0] {
+	case "get":
+		if len(terms) >= 2 {
+			arg := strings.TrimSpace(terms[1])
+			res, ok := storage.GetValue(arg)
+			if ok {
+				return string(res), ok
+			}
+			return "Key not found", ok
+		}
+		return "get is missing an argument", false
+
+		// case "set":
+		// if len(terms) >= 3 {
+		// key := strings.TrimSpace(terms[1])
+		// args := strings.TrimSpace(terms[1])
+		// rest = terms[2:len(terms)]
+		// }
+
+		// return "Command not found", true
+
+	default:
+		return "Command not found", true
+	}
+
+}
+
 func handleConn(conn net.Conn, storage *storage.Storage) {
 	for {
 		message, _ := bufio.NewReader(conn).ReadString('\n')

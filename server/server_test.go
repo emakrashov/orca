@@ -1,37 +1,31 @@
 package server
 
 import (
-	"bufio"
-	"fmt"
-	"net"
-	"strings"
 	"testing"
-
-	"github.com/emakrashov/orca/storage"
 )
 
 func TestTcpClient(t *testing.T) {
-	storage := storage.CreateStorage("/tmp/dat4")
-	defer storage.CloseStorage()
+	// storage := storage.CreateStorage("/tmp/dat4")
+	// defer storage.CloseStorage()
 
-	s, client := net.Pipe()
-	go func() {
-		handleConn(s, &storage)
-		s.Close()
-	}()
+	// s, client := net.Pipe()
+	// go func() {
+	// 	handleConn(s, &storage)
+	// 	s.Close()
+	// }()
 
-	client.Write([]byte("set orca whale\n"))
-	client.Write([]byte("set a abracadabra\n"))
-	client.Write([]byte("get orca\n"))
+	// client.Write([]byte("set orca whale\n"))
+	// client.Write([]byte("set a abracadabra\n"))
+	// client.Write([]byte("get orca\n"))
 
-	message, _ := bufio.NewReader(client).ReadString('\n')
-	message = strings.TrimSpace(message)
+	// message, _ := bufio.NewReader(client).ReadString('\n')
+	// message = strings.TrimSpace(message)
 
-	if message != "whale" {
-		t.Fatal("message: ", message)
-	}
-	fmt.Println("OK: message: ", message)
+	// if message != "whale" {
+	// 	t.Fatal("message: ", message)
+	// }
+	// fmt.Println("OK: message: ", message)
 
-	client.Write([]byte("exit\n"))
-	client.Close()
+	// client.Write([]byte("exit\n"))
+	// client.Close()
 }

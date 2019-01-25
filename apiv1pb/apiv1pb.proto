@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "github.com/emakrashov/orca/storage/apiv1pb";
+option java_outer_classname = "apiv1pb";
+
+package apiv1pb;
+
+// The API service definition.
+service Apiv1pb {
+  rpc Set(SetRequest) returns (SetReply) {}
+  rpc Get(GetRequest) returns (GetReply) {}
+}
+
+message GetRequest { string key = 1; }
+
+message GetReply {
+  bool success = 1;
+  string value = 2;
+}
+
+// The request message containing the user's name.
+message SetRequest {
+  string key = 1;
+  string value = 2;
+}
+
+// The response message containing the greetings
+message SetReply { bool success = 1; }
